@@ -28,6 +28,12 @@ public class Rotation extends Subsystem {
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
+    public Command sub(double angle){
+        return new ServoToPosition(servo,
+                angle,
+                this);
+    }
+
 
     @Override
     public void initialize() {
