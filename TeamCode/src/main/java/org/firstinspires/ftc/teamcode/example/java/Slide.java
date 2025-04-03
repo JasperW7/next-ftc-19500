@@ -16,7 +16,7 @@ public class Slide extends Subsystem {
     private Slide() { }
 
     // USER CODE
-    public DcMotorEx motor,motor2;
+    public MotorEx motor,motor2;
 
     public PIDFController controller = new PIDFController(0.017, 0.0, 0.00018);
     public Command resetZero() {
@@ -47,11 +47,15 @@ public class Slide extends Subsystem {
                 this);
     }
 
+    public double getPos(){
+        return motor.getCurrentPosition();
+    }
+
 
 
     @Override
     public void initialize() {
-        motor = new DcMotorEx(name);
-        motor2 = new DcMotorEx(name2);
+        motor = new MotorEx(name);
+        motor2 = new MotorEx(name2);
     }
 }

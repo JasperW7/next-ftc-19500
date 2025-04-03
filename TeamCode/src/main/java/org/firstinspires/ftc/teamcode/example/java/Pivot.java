@@ -16,7 +16,7 @@ public class Pivot extends Subsystem {
     private Pivot() { }
 
     // USER CODE
-    public DcMotorEx motor;
+    public MotorEx motor;
 
     public PIDFController controller = new PIDFController(0.03, 0.0, 0.0,0);
     public PIDFController controllerLow = new PIDFController(0.01,0,0,0.005);
@@ -47,9 +47,13 @@ public class Pivot extends Subsystem {
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
     }
+
+    public double getPos(){
+        return motor.getCurrentPosition();
+    }
     
     @Override
     public void initialize() {
-        motor = new DcMotorEx(name);
+        motor = new MotorEx(name);
     }
 }
