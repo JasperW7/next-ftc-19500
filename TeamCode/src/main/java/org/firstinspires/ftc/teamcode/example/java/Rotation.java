@@ -6,27 +6,28 @@ import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.ftc.OpModeData;
 import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition;
 
-public class Claw extends Subsystem {
+public class Rotation extends Subsystem {
     // BOILERPLATE
-    public static final Claw INSTANCE = new Claw();
-    private Claw() { }
+    public static final Rotation INSTANCE = new Rotation();
+    private Rotation() { }
 
     // USER CODE
     public Servo servo;
-    
-    public String name = "claw";
 
-    public Command open() {
+    public String name = "rotation";
+
+    public Command normal() {
         return new ServoToPosition(servo, // SERVO TO MOVE
-                0.3, // POSITION TO MOVE TO
+                .46, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
-    public Command close() {
+    public Command third() {
         return new ServoToPosition(servo, // SERVO TO MOVE
-                0.74, // POSITION TO MOVE TO
+                0.75, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
     }
+
 
     @Override
     public void initialize() {
