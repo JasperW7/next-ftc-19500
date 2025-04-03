@@ -33,12 +33,6 @@ public class Limelight extends Subsystem {
         }
     }
 
-    public Command set(double var1, double var2, double var3,double tx, double ty, double a){
-        var1 = tx;
-        var2 = ty;
-        var3 = a;
-        return null;
-    }
 
 
 

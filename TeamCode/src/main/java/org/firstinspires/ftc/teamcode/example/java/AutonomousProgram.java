@@ -27,7 +27,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 
-@Autonomous(name = "Sample")
+@Autonomous(name = "Sample Auton", group = "Autonomous")
 public class AutonomousProgram extends PedroOpMode {
     public AutonomousProgram() {
         super(Claw.INSTANCE, Wrist.INSTANCE, Rotation.INSTANCE,Pivot.INSTANCE, Slide.INSTANCE,Limelight.INSTANCE);
@@ -190,17 +190,20 @@ public class AutonomousProgram extends PedroOpMode {
                         )
                 ),
 
-                new FollowPath(park),
-                new ParallelGroup(
-                        Wrist.INSTANCE.par(),
-                        Slide.INSTANCE.down(),
-                        new WaitUntil(() -> Limelight.INSTANCE.getResult()!= null),
-                        Limelight.INSTANCE.set(x,y,angle,Limelight.INSTANCE.getResult()[1],Limelight.INSTANCE.getResult()[2],Limelight.INSTANCE.getResult()[0])
-
-                ),
-                new FollowPath(grabFromSub)
+                new FollowPath(park)
+//                new ParallelGroup(
+//                        Wrist.INSTANCE.par(),
+//                        Slide.INSTANCE.down(),
+//                        new WaitUntil(() -> Limelight.INSTANCE.getResult()!= null),
+//                        Limelight.INSTANCE.set(x,y,angle,Limelight.INSTANCE.getResult()[1],Limelight.INSTANCE.getResult()[2],Limelight.INSTANCE.getResult()[0])
+//
+//                ),
+//                new FollowPath(grabFromSub)
         );
     }
+
+
+
     @Override
     public void onInit(){
         follower = new Follower(hardwareMap,FConstants.class,LConstants.class);

@@ -26,7 +26,7 @@ public class SampleTele extends LinearOpMode{
 
     Limelight3A limelight;
     public double wristPar = 0.1, wristPerp = 0.62, wristOuttake = 0.82;
-    public double clawOpen =  0.3, clawClose = 0.74;
+    public double clawOpen =  0.55, clawClose = 0.74;
     public double rotationPos = 0.46;
     public double pusherClose = 0.98, pusherOpen = 0;
     public double armDown = 25;
