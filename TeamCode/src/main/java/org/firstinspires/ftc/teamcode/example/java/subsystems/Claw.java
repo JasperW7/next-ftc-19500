@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.example.java;
+package org.firstinspires.ftc.teamcode.example.java.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.rowanmcalpin.nextftc.core.Subsystem;
@@ -26,6 +26,12 @@ public class Claw extends Subsystem {
         return new ServoToPosition(servo, // SERVO TO MOVE
                 0.74, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
+    }
+
+    public Command sub(){
+        return new ServoToPosition(servo,
+                0.55,
+                this);
     }
 
     @Override

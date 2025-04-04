@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.example.java;
+package org.firstinspires.ftc.teamcode.example.java.opmodes;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
@@ -7,30 +7,28 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup;
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.conditionals.BlockingConditionalCommand;
-import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay;
 import com.rowanmcalpin.nextftc.core.command.utility.delays.WaitUntil;
-import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode;
-import com.rowanmcalpin.nextftc.ftc.OpModeData;
-import com.rowanmcalpin.nextftc.ftc.gamepad.GamepadManager;
 import com.rowanmcalpin.nextftc.pedro.FollowPath;
 import com.rowanmcalpin.nextftc.pedro.PedroOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.teamcode.example.java.FConstants;
+import org.firstinspires.ftc.teamcode.example.java.LConstants;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Limelight;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Pivot;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Rotation;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Slide;
+import org.firstinspires.ftc.teamcode.example.java.subsystems.Wrist;
 
 @Autonomous(name = "Sample Auton", group = "Autonomous")
-public class AutonomousProgram extends PedroOpMode {
-    public AutonomousProgram() {
-        super(Claw.INSTANCE, Wrist.INSTANCE, Rotation.INSTANCE,Pivot.INSTANCE, Slide.INSTANCE,Limelight.INSTANCE);
+public class SampleAuton extends PedroOpMode {
+    public SampleAuton() {
+        super(Claw.INSTANCE, Wrist.INSTANCE, Rotation.INSTANCE, Pivot.INSTANCE, Slide.INSTANCE, Limelight.INSTANCE);
     }
 
     public double x,y,angle;
@@ -50,14 +48,14 @@ public class AutonomousProgram extends PedroOpMode {
     private final Pose pickup3Pose = new Pose(28, 133, Math.toRadians(30));
 
     /** Park Pose for our robot, after we do all of the scoring. */
-    private final Pose parkPose = new Pose(60, 98, Math.toRadians(270));
+    public final Pose parkPose = new Pose(60, 98, Math.toRadians(270));
 
-    private final Pose sub1Pose = new Pose(60-x,98+y, Math.toRadians(270));
     /** Park Control Pose for our robot, this is used to manipulate the bezier curve that we will create for the parking.
      * The Robot will not go to this pose, it is used a control point for our bezier curve. */
     private final Pose parkControlPose = new Pose(60, 115, Math.toRadians(90));
 
-    private Path park, grabFromSub;
+    public Path park;
+    public Path grabFromSub;
     private PathChain scorePreload,grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     public void buildPaths(){
@@ -98,8 +96,11 @@ public class AutonomousProgram extends PedroOpMode {
         park = new Path(new BezierCurve(new Point(scorePose), new Point(parkControlPose), new Point(parkPose)));
         park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
 
-        grabFromSub = new Path(new BezierCurve(new Point(parkPose), new Point(sub1Pose)));
-        grabFromSub.setLinearHeadingInterpolation(parkPose.getHeading(), sub1Pose.getHeading());
+        grabFromSub = new Path(new BezierCurve(
+                new Point(parkPose),
+                new Point(parkPose.getX() + 5, parkPose.getY())
+        ));
+        grabFromSub.setLinearHeadingInterpolation(parkPose.getHeading(), Math.toRadians(270));
 
     }
 
@@ -107,6 +108,9 @@ public class AutonomousProgram extends PedroOpMode {
         return new SequentialGroup(
                 // PRELOAD
                 new ParallelGroup(
+                        Wrist.INSTANCE.par(),
+                        Rotation.INSTANCE.normal(),
+                        Claw.INSTANCE.close(),
                         Pivot.INSTANCE.toHigh(), //arm up
                         new FollowPath(scorePreload), //move while arm is going up
                         new SequentialGroup(
@@ -114,9 +118,8 @@ public class AutonomousProgram extends PedroOpMode {
                                 Slide.INSTANCE.toUp()
                         )
                 ),
-                Wrist.INSTANCE.outtake().thenWait(0.5), // wrist pos to score
-                Claw.INSTANCE.open().thenWait(0.5), // open claw
-
+                Wrist.INSTANCE.outtake().thenWait(.5),
+                Claw.INSTANCE.open().thenWait(.5),
                 // GRAB 1
                 new ParallelGroup(
                         Wrist.INSTANCE.par(), //wrist par to go back
@@ -126,7 +129,7 @@ public class AutonomousProgram extends PedroOpMode {
                                 new WaitUntil(() -> Slide.INSTANCE.getPos() > 120),
                                 Pivot.INSTANCE.toRest() //pivot down
                         )
-                ),
+                ).thenWait(1),
                 Pivot.INSTANCE.toDown().thenWait(.2), //bring pivot down to grab
                 Claw.INSTANCE.close().thenWait(.3), //close claw
 
@@ -151,7 +154,7 @@ public class AutonomousProgram extends PedroOpMode {
                                 new WaitUntil(() -> Slide.INSTANCE.getPos() > 120),
                                 Pivot.INSTANCE.toRest() //pivot down
                         )
-                ),
+                ).thenWait(1),
                 Pivot.INSTANCE.toDown().thenWait(.2), //bring pivot down to grab
                 Claw.INSTANCE.close().thenWait(.3), //close claw
 
@@ -176,7 +179,7 @@ public class AutonomousProgram extends PedroOpMode {
                                 new WaitUntil(() -> Slide.INSTANCE.getPos() > 120),
                                 Pivot.INSTANCE.toRest() //pivot down
                         )
-                ),
+                ).thenWait(1),
                 Pivot.INSTANCE.toDown().thenWait(.2), //bring pivot down to grab
                 Claw.INSTANCE.close().thenWait(.3), //close claw
 
@@ -189,16 +192,14 @@ public class AutonomousProgram extends PedroOpMode {
                                 Slide.INSTANCE.toUp() //also bring slide up when pivot is finished
                         )
                 ),
+                Wrist.INSTANCE.outtake().thenWait(.5),
+                Claw.INSTANCE.sub().thenWait(.5),
 
-                new FollowPath(park)
-//                new ParallelGroup(
-//                        Wrist.INSTANCE.par(),
-//                        Slide.INSTANCE.down(),
-//                        new WaitUntil(() -> Limelight.INSTANCE.getResult()!= null),
-//                        Limelight.INSTANCE.set(x,y,angle,Limelight.INSTANCE.getResult()[1],Limelight.INSTANCE.getResult()[2],Limelight.INSTANCE.getResult()[0])
-//
-//                ),
-//                new FollowPath(grabFromSub)
+                new FollowPath(park),
+                Limelight.INSTANCE.detectAndMove()
+                
+
+
         );
     }
 
@@ -206,8 +207,9 @@ public class AutonomousProgram extends PedroOpMode {
 
     @Override
     public void onInit(){
-        follower = new Follower(hardwareMap,FConstants.class,LConstants.class);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
+
         buildPaths();
     }
     @Override

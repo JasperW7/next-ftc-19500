@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.example.java;
+package org.firstinspires.ftc.teamcode.example.java.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.rowanmcalpin.nextftc.core.Subsystem;
@@ -6,34 +6,32 @@ import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.ftc.OpModeData;
 import com.rowanmcalpin.nextftc.ftc.hardware.ServoToPosition;
 
-public class Rotation extends Subsystem {
+public class Wrist extends Subsystem {
     // BOILERPLATE
-    public static final Rotation INSTANCE = new Rotation();
-    private Rotation() { }
+    public static final Wrist INSTANCE = new Wrist();
+    private Wrist() { }
 
     // USER CODE
     public Servo servo;
 
-    public String name = "rotation";
+    public String name = "wrist";
 
-    public Command normal() {
+    public Command perp() {
         return new ServoToPosition(servo, // SERVO TO MOVE
-                .46, // POSITION TO MOVE TO
+                0.62, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
     }
 
-    public Command third() {
+    public Command par() {
         return new ServoToPosition(servo, // SERVO TO MOVE
-                0.75, // POSITION TO MOVE TO
+                0.1, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
     }
-
-    public Command sub(double angle){
+    public Command outtake() {
         return new ServoToPosition(servo,
-                angle,
+                .82,
                 this);
     }
-
 
     @Override
     public void initialize() {

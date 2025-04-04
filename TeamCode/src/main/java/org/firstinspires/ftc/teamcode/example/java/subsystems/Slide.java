@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.example.java;
+package org.firstinspires.ftc.teamcode.example.java.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import static com.rowanmcalpin.nextftc.ftc.OpModeData.telemetry;
+
 import com.rowanmcalpin.nextftc.core.Subsystem;
 import com.rowanmcalpin.nextftc.core.command.Command;
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand;
 import com.rowanmcalpin.nextftc.core.control.controllers.PIDFController;
-import com.rowanmcalpin.nextftc.ftc.hardware.controllables.Controllable;
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.HoldPosition;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorEx;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.MotorGroup;
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.RunToPosition;
@@ -28,7 +29,7 @@ public class Slide extends Subsystem {
 
     public Command toUp() {
         return new RunToPosition(slides, // MOTOR TO MOVE
-                1400, // TARGET POSITION, IN TICKS
+                1300, // TARGET POSITION, IN TICKS
                 controller, // CONTROLLER TO IMPLEMENT
                 this); // IMPLEMENTED SUBSYSTEM
     }
@@ -43,7 +44,7 @@ public class Slide extends Subsystem {
 
     public Command down(){
         return new RunToPosition(slides,
-                300,
+                500,
                 controller,
                 this
                 );
@@ -51,6 +52,11 @@ public class Slide extends Subsystem {
 
     public double getPos(){
         return motor.getCurrentPosition();
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return new HoldPosition(slides, controller, this);
     }
 
 
