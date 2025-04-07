@@ -20,8 +20,8 @@ public class Pivot extends Subsystem {
     // USER CODE
     public MotorEx motor;
 
-    public PIDFController controller = new PIDFController(0.03, 0.0, 0.0,new StaticFeedforward(0));
-    public PIDFController controllerLow = new PIDFController(0.01,0,0,new StaticFeedforward(0.005));
+    public PIDFController controller = new PIDFController(0.03, 0.0, 0.0,new StaticFeedforward(0.005),100);
+    public PIDFController controllerLow = new PIDFController(0.0002,0,0,new StaticFeedforward(0),50);
     public Command resetZero() {
         return new InstantCommand(() -> { motor.resetEncoder(); });
     }
@@ -31,8 +31,8 @@ public class Pivot extends Subsystem {
 
     public Command toRest(){
         return new RunToPosition(motor,
-                100,
-                controller,
+                400,
+                controllerLow,
                 this);
     }
 

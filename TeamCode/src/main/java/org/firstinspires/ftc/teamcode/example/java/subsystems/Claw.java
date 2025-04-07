@@ -24,7 +24,7 @@ public class Claw extends Subsystem {
 
     public Command close() {
         return new ServoToPosition(servo, // SERVO TO MOVE
-                0.74, // POSITION TO MOVE TO
+                0.77, // POSITION TO MOVE TO
                 this); // IMPLEMENTED SUBSYSTEM
     }
 

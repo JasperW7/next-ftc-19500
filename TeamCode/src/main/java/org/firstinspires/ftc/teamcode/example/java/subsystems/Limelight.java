@@ -31,7 +31,7 @@ public class Limelight extends Subsystem {
     public String name = "limelight";
     public LLResult result;
     private Pose samplePose = null;
-    private double angle;
+    public double angle;
 
     private Command getSamplePose() {
         return new LambdaCommand()
@@ -40,13 +40,21 @@ public class Limelight extends Subsystem {
                     // If the limelight output is null set samplePose to null,
                     // Otherwise set it to the pose
                     // You can have many lines of code here if needed.
+
+                    ll.start();
                     result = ll.getLatestResult();
                     if (result== null) {
                         samplePose = null;
                     }else{
                         double[] python = result.getPythonOutput();
-                        samplePose = new Pose(60-python[1],98+python[2],Math.toRadians(270));
-                        angle = python[0];
+                        samplePose = new Pose(60-python[5],98+python[3],Math.toRadians(270));
+                        angle = python[4];
+                        if (angle>=0){
+                            angle = 1-angle/180 ;
+                        }else{
+                            angle = (-angle)/180;
+                        }
+                        ll.pause();
                     }
                 })
                 .setIsDone(() -> samplePose != null);
